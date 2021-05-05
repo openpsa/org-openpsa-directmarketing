@@ -1,0 +1,1 @@
+<p><?php echo $data['l10n']->get('unsubscribing failed'); ?></p>
