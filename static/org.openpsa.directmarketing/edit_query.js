@@ -6,14 +6,15 @@ var groups = {},
     zero_group_id = "";
 
 function count(array) {
-    var c = 0,
-        i;
-    for (i in array) { // in returns key, not object
-        if (array[i] !== undefined && array[i] !== null) {
-            c++;
-        }
+    if (!Array.isArray(array)) {
+        array = Object.values(array);
     }
-    return c;
+    return array.reduce(function(accumulator, value) {
+        if (value !== undefined && value !== null) {
+            accumulator++;
+        }
+        return accumulator;
+    }, 0);
 }
 
 function set_postdata() {
@@ -27,15 +28,11 @@ function set_postdata() {
     var rules_array = $("#midcom_helper_datamanager2_dummy_field_rules").val(),
         grid = $('#preview_persons').jqGrid();
 
-    if ($('#dirmar_rules_editor_container').is(':visible')) {
-        get_rules_array(zero_group_id);
-    }
-
     grid.setGridParam({'postData': {midcom_helper_datamanager2_dummy_field_rules: rules_array}});
 }
 
 function build_select(id, name, cssclass, options, selected, add_empty) {
-    var select = $('<select class="' + cssclass + '" name="' + name + '" id="' + id + '"/>'),
+    var select = $('<select class="' + cssclass + '" name="' + name + '" id="' + id + '"></select>'),
         option;
 
     if (add_empty === true) {
@@ -63,7 +60,7 @@ function rule(parent, id) {
 
     this.render = function (selected) {
         var rule_object = rules[this.id],
-            rule = $('<div id="' + this.id + '" class="rule" />'),
+            rule = $('<div id="' + this.id + '" class="rule"></div>'),
             parent_field = $('<input type="hidden" name="' + this.id + '[parent]" value="' + this.parent + '"/>'),
             object_select = build_select(this.id + '_object', this.id + '[object]', 'select', org_openpsa_directmarketing_edit_query_property_map, selected, true),
             remove_button = $('<i class="button remove_row fa fa-minus"></i>');
@@ -88,9 +85,7 @@ function rule(parent, id) {
 
     this.object_select_onchange = function () {
         /* Render next inputs based on value */
-        var selected = $("#" + this.id + "_object").val(),
-        properties = false,
-        parameters = false;
+        var selected = $("#" + this.id + "_object").val();
         if (!selected) {
             $("#" + this.id + "_property").remove();
             $("#" + this.id + "_parameter_name").remove();
@@ -219,7 +214,7 @@ function group(parent, number) {
 
     this.render = function (selected) {
         var group = this,
-            content_group = $('<div id="' + this.id + '" class="group"/>'),
+            content_group = $('<div id="' + this.id + '" class="group"></div>'),
             group_select = build_select(this.id + '_select', this.id + '[group]', 'groupselect', org_openpsa_directmarketing_group_select_map, selected, false),
             group_button = $('<input id="' + this.id + '_add_group" class="add_group" type="button" value="' + org_openpsa_directmarketing_edit_query_l10n_map.add_group + '">'),
             parent_field = $('<input type="hidden" name="' + this.id + '[parent]" value="' + this.parent + '"/>'),
