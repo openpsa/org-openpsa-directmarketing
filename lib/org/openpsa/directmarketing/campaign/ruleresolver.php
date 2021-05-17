@@ -64,6 +64,9 @@
  */
 class org_openpsa_directmarketing_campaign_ruleresolver
 {
+    /**
+     * @var midcom_core_collector
+     */
     private $mc; // Contact-qb containing results
 
     public function __construct()
@@ -337,7 +340,6 @@ class org_openpsa_directmarketing_campaign_ruleresolver
         // These are internal to midgard and/or not valid QB constraints
         $skip_properties = [
             // These will be deprecated soon
-            'orgOpenpsaAccesstype',
             // Skip metadata for now
             'metadata'
         ];
@@ -350,8 +352,7 @@ class org_openpsa_directmarketing_campaign_ruleresolver
 
         foreach ($object->get_properties() as $property) {
             if (   $property[0] == '_'
-                || in_array($property, $skip_properties)
-                || property_exists($object, $property)) {
+                || in_array($property, $skip_properties)) {
                 // Skip private or otherwise invalid properties
                 continue;
             }
